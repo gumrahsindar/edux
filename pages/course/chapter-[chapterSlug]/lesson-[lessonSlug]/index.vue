@@ -5,28 +5,48 @@ const course = useCourse()
 const route = useRoute()
 
 const chapter = computed(() => {
-  return course.chapters.find(
-    (chapter) => chapter.slug === route.params.chapterSlug
+  return (
+    course.chapters.find(
+      (chapter) => chapter.slug === route.params.chapterSlug
+    ) || null
   )
 })
 
 const lesson = computed(() => {
-  return chapter.value?.lessons.find(
-    (lesson) => lesson.slug === route.params.lessonSlug
+  return (
+    chapter.value?.lessons.find(
+      (lesson) => lesson.slug === route.params.lessonSlug
+    ) || null
   )
 })
-
-console.log(chapter)
 </script>
 
 <template>
-  <div>
-    <h1>Chapter</h1>
-    <h2>Lesson</h2>
-    <p v-if="chapter">
-      {{ chapter.title }}
+  <div v-if="chapter && lesson">
+    <p class="mt-0 uppercase font-bold text-slate-400 mb-1">
+      Lesson {{ chapter.number }} - {{ lesson.number }}
     </p>
-    <p v-if="lesson">{{ lesson.title }}</p>
+    <h2 class="my-0">{{ lesson.title }}</h2>
+    <div class="flex space-x-4 mt-2 mb-8">
+      <a
+        v-if="lesson.sourceUrl"
+        class="font-normal text-md text-gray-500"
+        :href="lesson.sourceUrl"
+      >
+        Download Source Code
+      </a>
+      <a
+        v-if="lesson.downloadUrl"
+        class="font-normal text-md text-gray-500"
+        :href="lesson.downloadUrl"
+      >
+        Download Video
+      </a>
+    </div>
+    <p>{{ lesson.text }}</p>
+  </div>
+  <div v-else>
+    <p>Loading...</p>
   </div>
 </template>
 
