@@ -19,6 +19,13 @@ const lesson = computed(() => {
     ) || null
   )
 })
+
+const title = computed(() => {
+  return `${lesson.value?.title} - ${course.title} ${lesson.value?.title}`
+})
+useHead({
+  title,
+})
 </script>
 
 <template>
