@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useCourse } from '~/composables/useCourse'
+import { useStorage } from '@vueuse/core'
 
 const course = useCourse()
 const route = useRoute()
@@ -28,9 +29,8 @@ useHead({
   title,
 })
 
-const progress = useState<boolean[][]>('progress', () => {
-  return []
-})
+const progress = useStorage<{ [key: number]: boolean[] }>('progress', {})
+
 const isLessonComplete = computed(() => {
   if (!chapter.value || !progress.value[chapter.value.number - 1]) {
     return false
