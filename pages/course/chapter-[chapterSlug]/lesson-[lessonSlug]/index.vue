@@ -54,6 +54,9 @@ const toggleComplete = () => {
       !isLessonComplete.value
   }
 }
+const handleUpdate = () => {
+  throw createError('Could not update')
+}
 </script>
 
 <template>
@@ -82,7 +85,7 @@ const toggleComplete = () => {
     <p>{{ lesson.text }}</p>
     <LessonCompleteButton
       :model-value="isLessonComplete"
-      @update:model-value="toggleComplete"
+      @update:model-value="handleUpdate"
     />
   </div>
   <div v-else>
