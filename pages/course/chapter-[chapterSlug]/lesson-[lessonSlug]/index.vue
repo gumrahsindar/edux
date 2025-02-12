@@ -13,6 +13,13 @@ const chapter = computed(() => {
   )
 })
 
+if (!chapter.value) {
+  throw createError({
+    statusCode: 404,
+    message: 'Chapter not foundaa',
+  })
+}
+
 const lesson = computed(() => {
   return (
     chapter.value?.lessons.find(
@@ -20,6 +27,13 @@ const lesson = computed(() => {
     ) || null
   )
 })
+
+if (!lesson.value) {
+  throw createError({
+    statusCode: 404,
+    message: 'Lesson not foundaa',
+  })
+}
 
 const title = computed(() => {
   return `${lesson.value?.title} - ${course.title} ${lesson.value?.title}`
@@ -54,9 +68,6 @@ const toggleComplete = () => {
       !isLessonComplete.value
   }
 }
-const handleUpdate = () => {
-  throw createError('Could not update')
-}
 </script>
 
 <template>
@@ -85,7 +96,7 @@ const handleUpdate = () => {
     <p>{{ lesson.text }}</p>
     <LessonCompleteButton
       :model-value="isLessonComplete"
-      @update:model-value="handleUpdate"
+      @update:model-value="toggleComplete"
     />
   </div>
   <div v-else>
