@@ -1,12 +1,13 @@
 <script setup lang="ts">
 const user = useSupabaseUser()
+const { query } = useRoute()
 
 watch(
   user,
-  () => {
+  async () => {
     if (user.value) {
       // Redirect to protected page
-      return navigateTo('/')
+      await navigateTo((query.redirectTo as string) || '/', { replace: true })
     }
   },
   { immediate: true }

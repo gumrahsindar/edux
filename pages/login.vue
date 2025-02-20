@@ -14,11 +14,15 @@
 const { title } = useCourse()
 
 const supabase = useSupabaseClient()
+const { query } = useRoute()
 
 const login = async () => {
+  const redirectTo = query.redirectTo
+    ? `${window.location.origin}/confirm?redirectTo=${query.redirectTo}`
+    : `${window.location.origin}/confirm`
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
-    options: { redirectTo: 'http://localhost:3000/confirm' },
+    options: { redirectTo },
   })
 
   if (error) {
