@@ -7,7 +7,7 @@ export const useCourse = () => {
       ...chapter,
       lessons: chapter.lessons.map((lesson) => ({
         ...lesson,
-        path: `/course/chapter-${chapter.slug}/lesson-${lesson.slug}`,
+        path: `/course/chapter/${chapter.slug}/lesson/${lesson.slug}`,
       })),
     })),
   }
