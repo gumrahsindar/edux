@@ -1,7 +1,7 @@
-<script setup lang="ts">
+<script setup>
 import { useStorage } from '@vueuse/core'
 
-const course = useCourse()
+const course = await useCourse()
 const route = useRoute()
 
 const { chapterSlug, lessonSlug } = route.params
@@ -10,9 +10,9 @@ const lesson = await useLesson(chapterSlug, lessonSlug)
 
 definePageMeta({
   middleware: [
-    function ({ params }, from) {
-      const course = useCourse()
-      const chapter = course.chapters.find(
+    async function ({ params }, from) {
+      const course = await useCourse()
+      const chapter = course.value.chapters.find(
         (chapter) => chapter.slug === params.chapterSlug
       )
       if (!chapter) {
@@ -42,21 +42,21 @@ definePageMeta({
 
 const chapter = computed(() => {
   return (
-    course.chapters.find(
+    course.value.chapters.find(
       (chapter) => chapter.slug === route.params.chapterSlug
     ) || null
   )
 })
 
 const title = computed(() => {
-  return `${lesson.value?.title} - ${course.title} ${lesson.value?.title}`
+  return `${lesson.value?.title} - ${course.value.title} ${lesson.value?.title}`
 })
 
 useHead({
   title,
 })
 
-const progress = useStorage<{ [key: number]: boolean[] }>('progress', {})
+const progress = useStorage('progress', {})
 
 const isLessonComplete = computed(() => {
   if (!chapter.value || !progress.value[chapter.value.number - 1]) {
