@@ -21,6 +21,6 @@ const name = computed(() => user.value?.user_metadata.full_name)
 
 const logout = async () => {
   await client.auth.signOut()
-  navigateTo('/')
+  navigateTo('/login', { replace: true })
 }
 </script>
