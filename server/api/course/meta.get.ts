@@ -1,45 +1,37 @@
-import course from '~/server/courseData'
+import { PrismaClient, Prisma } from '@prisma/client'
 
-export default defineEventHandler((event) => {
-  const outline = course.chapters.reduce<
-    Array<{
-      title: string
-      slug: string
-      number: number
-      lessons: Array<{
-        title: string
-        slug: string
-        number: number
-        path: string
-      }>
-    }>
-  >((prev, next) => {
-    const lessons = next.lessons.map((lesson) => ({
-      title: lesson.title,
+const prisma = new PrismaClient()
 
-      slug: lesson.slug,
+const lessonSelect = Prisma.validator<Prisma.LessonDefaultArgs>()({
+  select: {
+    title: true,
+    slug: true,
+    number: true,
+  },
+})
 
-      number: lesson.number,
+export type LessonOutline = Prisma.LessonGetPayload<typeof lessonSelect>
 
-      path: `/course/chapter/${next.slug}/lesson/${lesson.slug}`,
-    }))
+const chapterSelect = Prisma.validator<Prisma.ChapterDefaultArgs>()({
+  select: {
+    title: true,
+    slug: true,
+    number: true,
+    lessons: lessonSelect,
+  },
+})
 
-    const chapter = {
-      title: next.title,
+export type ChapterOutline = Prisma.ChapterGetPayload<typeof chapterSelect>
 
-      slug: next.slug,
+const courseSelect = Prisma.validator<Prisma.CourseDefaultArgs>()({
+  select: {
+    title: true,
+    chapters: chapterSelect,
+  },
+})
 
-      number: next.number,
+export type CourseOutline = Prisma.CourseGetPayload<typeof courseSelect>
 
-      lessons,
-    }
-
-    return [...prev, chapter]
-  }, [])
-
-  return {
-    title: course.title,
-
-    chapters: outline,
-  }
+export default defineEventHandler(() => {
+  return prisma.course.findFirst(courseSelect)
 })
