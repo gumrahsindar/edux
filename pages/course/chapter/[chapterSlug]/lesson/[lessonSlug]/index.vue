@@ -1,12 +1,14 @@
 <script setup>
-import { useStorage } from '@vueuse/core'
-
 const course = await useCourse()
 const route = useRoute()
 
 const { chapterSlug, lessonSlug } = route.params
 
 const lesson = await useLesson(chapterSlug, lessonSlug)
+const store = useCourseProgress()
+const { initiliaze, toggleComplete } = store
+
+initiliaze()
 
 definePageMeta({
   middleware: [
@@ -55,32 +57,6 @@ const title = computed(() => {
 useHead({
   title,
 })
-
-const progress = useStorage('progress', {})
-
-const isLessonComplete = computed(() => {
-  if (!chapter.value || !progress.value[chapter.value.number - 1]) {
-    return false
-  }
-  if (
-    !lesson.value ||
-    !progress.value[chapter.value.number - 1][lesson.value.number - 1]
-  ) {
-    return false
-  }
-  return lesson.value
-    ? progress.value[chapter.value.number - 1][lesson.value.number - 1]
-    : false
-})
-const toggleComplete = () => {
-  if (chapter.value && !progress.value[chapter.value.number - 1]) {
-    progress.value[chapter.value.number - 1] = []
-  }
-  if (chapter.value && lesson.value) {
-    progress.value[chapter.value.number - 1][lesson.value.number - 1] =
-      !isLessonComplete.value
-  }
-}
 </script>
 
 <template>
@@ -108,7 +84,8 @@ const toggleComplete = () => {
     <VideoPlayer v-if="lesson.videoId" :videoId="lesson.videoId" />
     <p>{{ lesson.text }}</p>
     <LessonCompleteButton
-      :model-value="isLessonComplete"
+      v-if="user"
+      :model-value="isCompleted"
       @update:model-value="toggleComplete"
     />
   </div>
