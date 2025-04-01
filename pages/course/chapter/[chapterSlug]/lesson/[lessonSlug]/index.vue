@@ -1,5 +1,6 @@
 <script setup>
 const course = await useCourse()
+const user = useSupabaseUser()
 const route = useRoute()
 
 const { chapterSlug, lessonSlug } = route.params
